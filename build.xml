@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  This is an example Ant build file for an Aiarch/Hierarchy
+  bot. You don't really need to know Ant in order to use
+  this file. Just update the information in the four
+  properties below, and run the command "ant".
+  
+  For more information, see the Aiarch User's Guide at
+    http://zem.fi/wiki/aiarch:ai2008:guide
+-->
+
+<project name="bot" default="package" basedir=".">
+	<!--
+	  Name of the bot.
+	  Must match the "package" declarations in the Java
+	  code, so therefore should only contain lowercase
+	  letters of the English alphabet.
+	-->
+	<property name="bot" value="randombot" />
+	
+	<!-- The class implementing the Player interface: -->
+	<property name="botclass" value="RandomBot" />
+	
+	<!-- Your real name: -->
+	<property name="author" value="Firstname Lastname" />
+	
+	<!-- Your student ID number: -->
+	<property name="studentid" value="12345X" />
+	
+	<!--
+	  Human-readable name for the bot.
+	  This default value does not need to be changed, if
+	  you don't mind using the package name as the bot name.
+	  This name can contain spaces and such.
+	-->
+	<property name="botname" value="${bot}" />
+	
+	<!--
+	  No changes should be needed below this line.
+	-->
+	
+	<target name="init">
+		<tstamp />
+	</target>
+	
+	<target name="package" depends="init"
+		description="build a .jar package">
+		<jar destfile="${bot}.jar" basedir=".">
+			<manifest>
+				<attribute name="Bot-Class" value="${bot}.${botclass}" />
+				<attribute name="Bot-Author" value="${author}" />
+				<attribute name="Bot-Student-ID" value="${studentid}" />
+				<attribute name="Bot-Name" value="${botname}" />
+			</manifest>
+			<include name="${bot}/**.class" />
+			<zipfileset dir="${bot}" prefix="${bot}">
+				<include name="**.java" />
+			</zipfileset>
+		</jar>
+	</target>
+	
+	<target name="clean" description="clean up generated files">
+		<delete file="${bot}.jar" />
+	</target>
+</project>
