@@ -10,23 +10,23 @@
     http://zem.fi/wiki/aiarch:ai2008:guide
 -->
 
-<project name="bot" default="package" basedir=".">
+<project name="kuulabot" default="package" basedir="bin">
 	<!--
 	  Name of the bot.
 	  Must match the "package" declarations in the Java
 	  code, so therefore should only contain lowercase
 	  letters of the English alphabet.
 	-->
-	<property name="bot" value="randombot" />
+	<property name="bot" value="ai/bot/kuula" />
 	
 	<!-- The class implementing the Player interface: -->
-	<property name="botclass" value="RandomBot" />
+	<property name="botclass" value="KuulaBot" />
 	
 	<!-- Your real name: -->
-	<property name="author" value="Firstname Lastname" />
+	<property name="author" value="Kimmo Puputti, Hannu Lyytikäinen" />
 	
 	<!-- Your student ID number: -->
-	<property name="studentid" value="12345X" />
+	<property name="studentid" value="63697L" />
 	
 	<!--
 	  Human-readable name for the bot.
@@ -34,7 +34,9 @@
 	  you don't mind using the package name as the bot name.
 	  This name can contain spaces and such.
 	-->
-	<property name="botname" value="${bot}" />
+	<property name="botname" value="Kuula Bot" />
+	
+	<property name="jarname" value="kuulabot" />
 	
 	<!--
 	  No changes should be needed below this line.
@@ -46,7 +48,7 @@
 	
 	<target name="package" depends="init"
 		description="build a .jar package">
-		<jar destfile="${bot}.jar" basedir=".">
+		<jar destfile="../${jarname}.jar" basedir=".">
 			<manifest>
 				<attribute name="Bot-Class" value="${bot}.${botclass}" />
 				<attribute name="Bot-Author" value="${author}" />
