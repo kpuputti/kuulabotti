@@ -82,7 +82,7 @@ public class KuulaBot implements Player {
 
 	private Map<Integer, List<GameSituation>> getFollowingSituation(Map<Integer, List<GameSituation>> situations) {
 		
-		Map<Integer, GameSituation> map = new HashMap<>
+		//Map<Integer, GameSituation> map = new HashMap<>
 		
 		return null;
 	}
