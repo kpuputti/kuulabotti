@@ -45,18 +45,25 @@ public class ScoreCounter {
         int maxMoveScore = 0;
 
         List<Move> moves = situation.legal();
+        MoveType moveType = null;
+        int movePoints = 0;
+        int firepower = 0;
 
         for (Move move : moves) {
 
-            MoveType moveType = move.getType();
-            int movePoints = 0;
-            int firepower = 0;
+            moveType = move.getType();
+            movePoints = 0;
+            firepower = 0;
 
             if (moveType.equals(MoveType.MOVE)) {
 
                 firepower = board.firepower(situationSide, move.getFrom());
 
             } else if (moveType.equals(MoveType.ATTACK)) {
+                
+                if (situationSide.equals(this.side)) {
+                    return sideprefix * Integer.MAX_VALUE;
+                }
 
                 movePoints = this.ATTACK_POINTS * move.getTarget().getValue();
                 firepower = board.firepower(situationSide, move.getFrom());
@@ -71,7 +78,7 @@ public class ScoreCounter {
                 firepower = board.firepower(situationSide, move.getFrom());
 
             }
-
+            
             int moveScore = this.getMoveScore(moveType, situationSide, movePoints, firepower);
             situationScore += moveScore;
 
@@ -85,6 +92,8 @@ public class ScoreCounter {
 
         }
 
+        moves = null;
+        
         this.log.info(
                 "situation score: " + situationScore + "\n" +
                 "prefix: " + sideprefix +"\n" +
