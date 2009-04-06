@@ -13,7 +13,6 @@ import ai.bot.kuula.game.ScoreCounter;
 
 import fi.zem.aiarch.game.hierarchy.Engine;
 import fi.zem.aiarch.game.hierarchy.Move;
-import fi.zem.aiarch.game.hierarchy.MoveType;
 import fi.zem.aiarch.game.hierarchy.Player;
 import fi.zem.aiarch.game.hierarchy.Side;
 import fi.zem.aiarch.game.hierarchy.Situation;
@@ -23,6 +22,8 @@ public class KuulaBot implements Player {
 	public Logger log = Logger.getLogger(KuulaBot.class.getName());
 
 	private Random rnd;
+	
+	private final int MAX_DEPTH = 2;
 	
 	/** game engine */
 	private Engine engine;
@@ -56,59 +57,52 @@ public class KuulaBot implements Player {
 		
 		this.log.info("New move.");
 		
-		List<Move> moves = situation.legal();
-		List<GameSituation> list = new ArrayList<GameSituation>();
-
+		
 		// init situation map
-		Map<Integer, List<GameSituation>> situationMap = new HashMap<Integer, List<GameSituation>>();
-		List<GameSituation> situationList = new ArrayList<GameSituation>();
-		GameSituation gameSituation = new GameSituation(situation, 0);
-		situationList.add(gameSituation);
-		situationMap.put(0, situationList);
 		
-		int mapSize = situationMap.size();
-		/*
-		while (mapSize < 4) {
-			situationMap = getFollowingSituation(situationMap);
-			mapSize = situationMap.size();
-		}
-		*/
+		GameSituation startSituation = new GameSituation(situation, 0, 0);
+		startSituation = getChildren(startSituation);
 		
 		
-		// Add all situations after legal moves to the list.
-		/*for (Move move : moves) {
-			
-			Situation newSituation = situation.copyApply(move);
-			int situationScore = this.scoreCounter.count(newSituation);
-			
-			list.add(new GameSituation(newSituation, situationScore));
-			
-		}
-		*/
 		
+
+		List<Move> moves = situation.legal();
 		return moves.get(rnd.nextInt(moves.size()));
 	}
-
-	private Map<Integer, List<GameSituation>> getFollowingSituation(Map<Integer, List<GameSituation>> situations) {
+	
+	
+	/**
+	 * Searches the children of a situation until fixed depth.
+	 * 
+	 * @param gameSituation
+	 * @return the same game situation but with children
+	 */
+	private GameSituation getChildren (GameSituation gameSituation) {
+		this.log.info("Getting children for node at depth: " + gameSituation.getDepth());
 		
-		//Map<Integer, GameSituation> map = new HashMap<>
+		List<Move> moves = gameSituation.getSituation().legal();
+		this.log.info("** ** ** ** CHILDREN: " + moves.size());
+		List<GameSituation> children = new ArrayList<GameSituation>();
 		
-		return null;
+		for (Move move : moves) {
+			this.log.info("checking move");
+			Situation newSituation = gameSituation.getSituation().copyApply(move);
+			int score = this.scoreCounter.count(newSituation);
+			int depth = gameSituation.getDepth() + 1;
+			GameSituation newGameSituation = new GameSituation(newSituation, score, depth);
+			newGameSituation.setParentSituation(gameSituation);
+			
+			if ( newGameSituation.getDepth() <= MAX_DEPTH ) {
+				newGameSituation = getChildren(newGameSituation);
+			}
+			
+			children.add(newGameSituation);
+		}
+		
+		gameSituation.setChildSituations(children);
+		
+		return gameSituation;
 	}
 	
 	
-	
-	/*
-	for (Move move : moves) {
-		
-		if (move.getType() == MoveType.DESTROY) {
-			return move;
-		}
-		
-		if (move.getType() == MoveType.ATTACK  ) {
-			return move;
-		}
-
-	}
-*/	
 }
