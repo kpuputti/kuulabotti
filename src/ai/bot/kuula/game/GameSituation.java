@@ -2,15 +2,10 @@ package ai.bot.kuula.game;
 
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import fi.zem.aiarch.game.hierarchy.Situation;
 
 public class GameSituation {
 	
-	public Logger log = Logger.getLogger(GameSituation.class);
-
 	/** Actual situation */
 	private Situation situation;
 	
@@ -21,7 +16,6 @@ public class GameSituation {
 	private int score;
 	
 	public GameSituation (Situation sit, int val) {
-		this.log.setLevel(Level.DEBUG);
 		this.situation = sit;
 		this.score = val;
 	}

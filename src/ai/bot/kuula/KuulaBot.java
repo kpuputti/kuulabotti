@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ai.bot.kuula.game.GameSituation;
 import ai.bot.kuula.game.ScoreCounter;
@@ -21,7 +20,8 @@ import fi.zem.aiarch.game.hierarchy.Situation;
 
 public class KuulaBot implements Player {
 	
-	public Logger log = Logger.getLogger(KuulaBot.class); 
+	//private final static Logger log = Logger.getLogger(KuulaBot.class);
+	private static Logger log = Logger.getLogger(KuulaBot.class.getName());
 
 	private Random rnd;
 	
@@ -38,7 +38,7 @@ public class KuulaBot implements Player {
 
 	public KuulaBot(Random rnd) {
 		
-		this.log.setLevel(Level.DEBUG);
+		this.log.setLevel(Level.INFO);
 		
 		this.rnd = rnd;
 		
@@ -68,12 +68,12 @@ public class KuulaBot implements Player {
 		situationMap.put(0, situationList);
 		
 		int mapSize = situationMap.size();
-		
+		/*
 		while (mapSize < 4) {
 			situationMap = getFollowingSituation(situationMap);
 			mapSize = situationMap.size();
 		}
-		
+		*/
 		
 		
 		// Add all situations after legal moves to the list.
