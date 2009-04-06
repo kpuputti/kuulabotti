@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import ai.bot.kuula.game.GameSituation;
 import ai.bot.kuula.game.ScoreCounter;
 
@@ -17,6 +20,8 @@ import fi.zem.aiarch.game.hierarchy.Side;
 import fi.zem.aiarch.game.hierarchy.Situation;
 
 public class KuulaBot implements Player {
+	
+	public Logger log = Logger.getLogger(KuulaBot.class); 
 
 	private Random rnd;
 	
@@ -32,8 +37,11 @@ public class KuulaBot implements Player {
 	private ScoreCounter scoreCounter;
 
 	public KuulaBot(Random rnd) {
+		
+		this.log.setLevel(Level.DEBUG);
+		
 		this.rnd = rnd;
-
+		
 	}
 
 	public void start(Engine engine, Side side) {
@@ -46,6 +54,8 @@ public class KuulaBot implements Player {
 	}
 
 	public Move move(Situation situation, int timeLeft) {
+		
+		this.log.info("New move.");
 		
 		List<Move> moves = situation.legal();
 		List<GameSituation> list = new ArrayList<GameSituation>();
@@ -82,7 +92,7 @@ public class KuulaBot implements Player {
 
 	private Map<Integer, List<GameSituation>> getFollowingSituation(Map<Integer, List<GameSituation>> situations) {
 		
-		Map<Integer, GameSituation> map = new HashMap<>
+		//Map<Integer, GameSituation> map = new HashMap<>
 		
 		return null;
 	}
