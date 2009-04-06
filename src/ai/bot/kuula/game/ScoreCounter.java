@@ -61,6 +61,10 @@ public class ScoreCounter {
 
             } else if (moveType.equals(MoveType.ATTACK)) {
                 
+                if (situationSide.equals(this.side)) {
+                    return Integer.MAX_VALUE;
+                }
+
                 movePoints = this.ATTACK_POINTS * move.getTarget().getValue();
                 firepower = board.firepower(situationSide, move.getFrom());
 
