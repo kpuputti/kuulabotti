@@ -62,7 +62,7 @@ public class ScoreCounter {
             } else if (moveType.equals(MoveType.ATTACK)) {
                 
                 if (situationSide.equals(this.side)) {
-                    return sideprefix * Integer.MAX_VALUE;
+                    return Integer.MAX_VALUE;
                 }
 
                 movePoints = this.ATTACK_POINTS * move.getTarget().getValue();

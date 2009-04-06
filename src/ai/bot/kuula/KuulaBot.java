@@ -13,6 +13,7 @@ import ai.bot.kuula.game.ScoreCounter;
 
 import fi.zem.aiarch.game.hierarchy.Engine;
 import fi.zem.aiarch.game.hierarchy.Move;
+import fi.zem.aiarch.game.hierarchy.MoveType;
 import fi.zem.aiarch.game.hierarchy.Player;
 import fi.zem.aiarch.game.hierarchy.Side;
 import fi.zem.aiarch.game.hierarchy.Situation;
@@ -60,21 +61,33 @@ public class KuulaBot implements Player {
 		this.log.fine("New move.");
 
 		// set max depth for this search
-		this.maxDepth = 2;
+		this.maxDepth = 1;
 		this.currentBest = null;
 
-		GameSituation startSituation = new GameSituation(situation, 0, 0);
-		startSituation = getChildren(startSituation);
+		while (this.maxDepth < 4) {
+			System.gc();
+			GameSituation startSituation = new GameSituation(situation, 0, 0);
+			searchChildren(startSituation);
+			
+			if (this.currentBest.getScore() == Integer.MAX_VALUE) {
+				break;
+			}
+			
+			this.maxDepth ++;
+		}
+
 		this.log.info("**************************************************");
 		this.log.info("Best score: " + this.currentBest.getScore());
 		this.scoreCounter.count(this.currentBest.getSituation());
-		
+		this.log.info("best score depth: " + this.currentBest.getDepth());
+
 		GameSituation nextSituation = this.currentBest;
-		
+		this.currentBest = null;
+
 		while (nextSituation.getDepth() > 1) {
 			nextSituation = nextSituation.getParentSituation();
 		}
-		
+
 		Move nextMove = nextSituation.getSituation().getPreviousMove();
 
 		if (nextMove != null) {
@@ -93,13 +106,20 @@ public class KuulaBot implements Player {
 	 * @param gameSituation
 	 * @return the same game situation but with children
 	 */
-	private GameSituation getChildren (GameSituation gameSituation) {
+	private void searchChildren (GameSituation gameSituation) {
 		this.log.info("Getting children for node at depth: " + gameSituation.getDepth());
 
 		List<Move> moves = gameSituation.getSituation().legal();
-		List<GameSituation> children = new ArrayList<GameSituation>();
+		//List<GameSituation> children = new ArrayList<GameSituation>();
 
 		for (Move move : moves) {
+			
+			if (gameSituation.getDepth() == 0 && move.getType() == MoveType.ATTACK) {
+				Situation situation = gameSituation.getSituation().copyApply(move);
+				this.currentBest = new GameSituation(situation, Integer.MAX_VALUE, 1);
+				return;
+			}
+			
 
 			Situation newSituation = gameSituation.getSituation().copyApply(move);
 			int score = this.scoreCounter.count(newSituation);
@@ -115,16 +135,9 @@ public class KuulaBot implements Player {
 			this.log.info("DEPTH: " + newGameSituation.getDepth());
 
 			if ( newGameSituation.getDepth() < this.maxDepth) {
-				newGameSituation = getChildren(newGameSituation);
+				searchChildren(newGameSituation);
 			}
 
-			children.add(newGameSituation);
 		}
-
-		gameSituation.setChildSituations(children);
-
-		return gameSituation;
 	}
-
-
 }
