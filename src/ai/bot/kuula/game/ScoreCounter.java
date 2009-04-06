@@ -12,94 +12,98 @@ import fi.zem.aiarch.game.hierarchy.Situation;
 
 public class ScoreCounter {
 
-	public Logger log = Logger.getLogger(ScoreCounter.class.getName());
+    public Logger log = Logger.getLogger(ScoreCounter.class.getName());
 
-	private final int WEIGHT_DESTROY = 1;
-	private final int WEIGHT_ATTACK = 1;
-	private final int WEIGHT_TARGET_VALUE = 1;
+    private final int WEIGHT_DESTROY = 1;
+    private final int WEIGHT_ATTACK = 1;
+    private final int WEIGHT_TARGET_VALUE = 1;
 
-	private final int WEIGHT_FIREPOWER = 20;	
-	private final int WEIGHT_MOVE = 80;
+    private final int WEIGHT_FIREPOWER = 20;	
+    private final int WEIGHT_MOVE = 80;
 
-	private final int ATTACK_POINTS = 10;
-	private final int DESTROY_POINTS = 20;
+    private final int ATTACK_POINTS = 10;
+    private final int DESTROY_POINTS = 20;
 
-	/** Own side */
-	private Side side;
+    /** Own side */
+    private Side side;
 
-	public ScoreCounter (Side side) {
-		this.log.setLevel(Level.INFO);
-		this.side = side;
-	}
+    public ScoreCounter (Side side) {
+        this.log.setLevel(Level.INFO);
+        this.side = side;
+    }
 
-	public int count(Situation situation) {
+    public int count(Situation situation) {
 
-		Side situationSide = situation.getTurn();
-		Board board = situation.getBoard();
+        Side situationSide = situation.getTurn();
+        Board board = situation.getBoard();
 
-		int situationScore = 0;
-		int minMoveScore = 0;
-		int maxMoveScore = 0;
+        // If the current situation is opponents turn, score is going to be negative.
+        int sideprefix = situationSide.equals(this.side) ? 1 : -1;
 
-		List<Move> moves = situation.legal();
+        int situationScore = 0;
+        int minMoveScore = 0;
+        int maxMoveScore = 0;
 
-		for (Move move : moves) {
+        List<Move> moves = situation.legal();
 
-			MoveType moveType = move.getType();
-			int movePoints = 0;
-			int firepower = 0;
+        for (Move move : moves) {
 
-			if (moveType.equals(MoveType.MOVE)) {
+            MoveType moveType = move.getType();
+            int movePoints = 0;
+            int firepower = 0;
 
-				firepower = board.firepower(situationSide, move.getFrom());
+            if (moveType.equals(MoveType.MOVE)) {
 
-			} else if (moveType.equals(MoveType.ATTACK)) {
+                firepower = board.firepower(situationSide, move.getFrom());
 
-				movePoints = this.ATTACK_POINTS * move.getTarget().getValue();
-				firepower = board.firepower(situationSide, move.getFrom());
+            } else if (moveType.equals(MoveType.ATTACK)) {
 
-			} else if (moveType.equals(MoveType.DESTROY)) {
+                movePoints = this.ATTACK_POINTS * move.getTarget().getValue();
+                firepower = board.firepower(situationSide, move.getFrom());
 
-				movePoints = this.DESTROY_POINTS * move.getTarget().getValue();
-				firepower = board.firepower(situationSide, move.getFrom());
+            } else if (moveType.equals(MoveType.DESTROY)) {
 
-			}
+                if (!situationSide.equals(this.side)) {
+                    return sideprefix * Integer.MAX_VALUE;
+                }
 
-			int moveScore = this.getMoveScore(movePoints, firepower);
-			situationScore += moveScore;
+                movePoints = this.DESTROY_POINTS * move.getTarget().getValue();
+                firepower = board.firepower(situationSide, move.getFrom());
 
-			if (moveScore < minMoveScore) {
-				minMoveScore = moveScore;
-			}
+            }
 
-			if (moveScore > maxMoveScore) {
-				maxMoveScore = moveScore;
-			}
+            int moveScore = this.getMoveScore(moveType, situationSide, movePoints, firepower);
+            situationScore += moveScore;
 
-		}
+            if (moveScore < minMoveScore) {
+                minMoveScore = moveScore;
+            }
 
-		// If the current situation is opponents turn, score is going to be negative.
-		int sideprefix = situationSide.equals(this.side) ? 1 : -1;
+            if (moveScore > maxMoveScore) {
+                maxMoveScore = moveScore;
+            }
 
-		this.log.info(
-				"situation score: " + situationScore + "\n" +
-				"prefix: " + sideprefix +"\n" +
-				"min move score: " + minMoveScore +"\n" +
-				"max move score: " + maxMoveScore
-		);
+        }
 
-		return sideprefix * situationScore;
+        this.log.info(
+                "situation score: " + situationScore + "\n" +
+                "prefix: " + sideprefix +"\n" +
+                "min move score: " + minMoveScore +"\n" +
+                "max move score: " + maxMoveScore
+        );
 
-	}
+        return sideprefix * situationScore;
 
-	private int getMoveScore(int movePoints, int firepower) {
+    }
 
-		int score = 
-			WEIGHT_MOVE * movePoints +
-			WEIGHT_FIREPOWER * firepower;
+    private int getMoveScore(MoveType moveType, Side side, int movePoints, int firepower) {
 
-		return score;
+        int score = 
+            WEIGHT_MOVE * movePoints +
+            WEIGHT_FIREPOWER * firepower;
 
-	}
-	
+        return score;
+
+    }
+
 }
