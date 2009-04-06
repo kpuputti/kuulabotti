@@ -20,8 +20,7 @@ import fi.zem.aiarch.game.hierarchy.Situation;
 
 public class KuulaBot implements Player {
 	
-	//private final static Logger log = Logger.getLogger(KuulaBot.class);
-	private static Logger log = Logger.getLogger(KuulaBot.class.getName());
+	public Logger log = Logger.getLogger(KuulaBot.class.getName());
 
 	private Random rnd;
 	

@@ -1,6 +1,8 @@
 package ai.bot.kuula.game;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import fi.zem.aiarch.game.hierarchy.Board;
 import fi.zem.aiarch.game.hierarchy.Move;
@@ -9,6 +11,8 @@ import fi.zem.aiarch.game.hierarchy.Side;
 import fi.zem.aiarch.game.hierarchy.Situation;
 
 public class ScoreCounter {
+	
+	public Logger log = Logger.getLogger(ScoreCounter.class.getName());
 	
 	private final int WEIGHT_DESTROY = 1;
 	private final int WEIGHT_ATTACK = 1;
@@ -24,6 +28,7 @@ public class ScoreCounter {
 	private Side side;
 	
 	public ScoreCounter (Side side) {
+		this.log.setLevel(Level.INFO);
 		this.side = side;
 	}
 	
@@ -38,6 +43,7 @@ public class ScoreCounter {
 		for (Move move : moves) {
 			
 			MoveType moveType = move.getType();
+			this.log.info("Move type: " + moveType);
 			
 			if (moveType.equals(MoveType.MOVE)) {
 				
