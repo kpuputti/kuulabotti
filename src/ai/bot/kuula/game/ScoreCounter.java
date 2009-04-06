@@ -21,8 +21,8 @@ public class ScoreCounter {
     private final int WEIGHT_FIREPOWER = 20;	
     private final int WEIGHT_MOVE = 80;
 
-    private final int ATTACK_POINTS = 10;
-    private final int DESTROY_POINTS = 20;
+    private final int ATTACK_POINTS = 100000;
+    private final int DESTROY_POINTS = 500000;
 
     /** Own side */
     private Side side;
@@ -61,18 +61,10 @@ public class ScoreCounter {
 
             } else if (moveType.equals(MoveType.ATTACK)) {
                 
-                if (situationSide.equals(this.side)) {
-                    return sideprefix * Integer.MAX_VALUE;
-                }
-
                 movePoints = this.ATTACK_POINTS * move.getTarget().getValue();
                 firepower = board.firepower(situationSide, move.getFrom());
 
             } else if (moveType.equals(MoveType.DESTROY)) {
-
-                if (!situationSide.equals(this.side)) {
-                    return sideprefix * Integer.MAX_VALUE;
-                }
 
                 movePoints = this.DESTROY_POINTS * move.getTarget().getValue();
                 firepower = board.firepower(situationSide, move.getFrom());
